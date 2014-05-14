@@ -1,6 +1,7 @@
 float ballX = random(200);
 float ballY = random(200);
 int radius = 10;
+boolean ballMoving = false;
 
 int paddleWidth = 100;
 int paddleHeight = 10;
@@ -15,21 +16,33 @@ void setup(){
 }
 
 void draw(){
-  background(100, 0, 130);
-  fill(0, 200, 200);
+  background(0, 108, 135);
+
+  fill(255, 234, 0);
   ellipse(ballX, ballY, radius*2, radius*2);
+
+  fill(240, 126, 65);
   rect(mouseX, paddleY, paddleWidth, paddleHeight);
+
   isGameOver();
-  moveBall();
-  isChangeVelocity();
+  applyVelocity();
+  changeVelocity();
 }
 
-void moveBall(){
+void mouseClicked(){
+    if (!ballMoving){
+      float xVelocity = random(4, 6);
+      float yVelocity = random(2, 3);
+      ballMoving = true;
+    }
+};
+
+void applyVelocity(){
   ballX += xVelocity;
   ballY += yVelocity;
 }
 
-void isChangeVelocity(){
+void changeVelocity(){
   if (hitsLeftWall()){
     xVelocityChange();
   }
