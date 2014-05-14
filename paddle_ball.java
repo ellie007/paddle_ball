@@ -7,6 +7,8 @@ int paddleWidth = 100;
 int paddleHeight = 10;
 int paddleY;
 
+int score = 0;
+
 float xVelocity = random(4, 6);
 float yVelocity = random(2, 3);
 
@@ -24,17 +26,21 @@ void draw(){
   fill(240, 126, 65);
   rect(mouseX, paddleY, paddleWidth, paddleHeight);
 
+  fill(255, 0, 0);
+  textSize(30);
+  text(score, 75, 150);
+
   isGameOver();
   applyVelocity();
   changeVelocity();
 }
 
 void mouseClicked(){
-    if (!ballMoving){
-      float xVelocity = random(4, 6);
-      float yVelocity = random(2, 3);
-      ballMoving = true;
-    }
+  if (ballMoving){
+    float xVelocity = random(4, 6);
+    float yVelocity = random(2, 3);
+    ballMoving = true;
+   }
 };
 
 void applyVelocity(){
@@ -52,6 +58,7 @@ void changeVelocity(){
 
   if (hitsPaddle()){
     yVelocityChange();
+    incrementScore();
   }
   else if (hitsCeiling()){
     yVelocityChange();
@@ -61,6 +68,10 @@ void changeVelocity(){
 void isGameOver(){
   if (ballY > height){
     noLoop();}
+}
+
+void incrementScore(){
+  score += 1;
 }
 
 boolean hitsPaddle(){
@@ -127,10 +138,10 @@ float ballRight(){
   return ballX + radius;
 }
 
-float ballLeft(){
-  return ballX - radius;
-}
-
 float ballBottom(){
   return ballY + radius;
+}
+
+float ballLeft(){
+  return ballX - radius;
 }
