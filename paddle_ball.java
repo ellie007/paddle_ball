@@ -1,9 +1,12 @@
-float ballX = random(200);
-float ballY = random(200);
-int radius = 10;
+float ballX = 150;
+float ballY = 150;
+int radius = 8;
 boolean ballMoving = false;
 
-ArrayList bricks;
+ArrayList<Brick> bricks;
+int brickY = 50;
+float brickWidth = 50, brickHeight = 25;
+int numOfBricks = 7;
 
 int paddleWidth = 100;
 int paddleHeight = 10;
@@ -19,10 +22,14 @@ void setup(){
  paddleY = height - 70;
  bricks = new ArrayList();
 
- for (int i = 1; i < 7; i ++){
-   Brick brick = new Brick();
-   brick.setLocation(50 * i, 50);
-   bricks.add(brick);
+ createBricks();
+}
+
+void createBricks(){
+  for (int i = 1; i < numOfBricks; i ++){
+    Brick brick = new Brick();
+    brick.setLocation(50 * i, brickY, brickWidth, brickHeight);
+    bricks.add(brick);
   }
 }
 
@@ -48,7 +55,6 @@ void draw(){
   applyVelocity();
   changeVelocity();
 }
-
 
 void mouseClicked(){
   if (ballMoving){
@@ -77,6 +83,20 @@ void changeVelocity(){
   }
   else if (hitsCeiling()){
     yVelocityChange();
+  }
+
+  if (hitsBricks()){
+    yVelocityChange();
+    score += 5;
+    numOfBricks -= 1;
+    regenerateBricks();
+  }
+}
+
+void regenerateBricks(){
+  if (numOfBricks == 1){
+    numOfBricks = 7;
+    createBricks();
   }
 }
 
@@ -137,6 +157,25 @@ boolean paddleSurface(){
    return result;
 }
 
+boolean hitsBricks(){
+  boolean result = false;
+  for (int i = 0; i < bricks.size(); i++){
+    Brick thisBrick = bricks.get(i);
+    //float brickTop = thisBrick.getY();
+    float brickBottom = thisBrick.getY() + thisBrick.getBrickHeight();
+    float brickLeft = thisBrick.getX();
+    float brickRight = thisBrick.getX() + thisBrick.getBrickWidth();
+
+    if (ballTop() <= brickBottom){
+      if (ballLeft() >= brickLeft && ballRight() <= brickRight){
+        result = true;
+        bricks.remove(i);
+      }
+    }
+  }
+  return result;
+}
+
 void xVelocityChange(){
   xVelocity = xVelocity * -1;
 }
@@ -163,17 +202,34 @@ float ballLeft(){
 
 class Brick{
   float x, y;
+  float brickWidth, brickHeight;
 
-  void setLocation(float x, float y){
+  float getY(){
+    return this.y;
+  }
+
+  float getX(){
+    return this.x;
+  }
+
+  float getBrickHeight(){
+    return this.brickHeight;
+  }
+
+  float getBrickWidth(){
+    return this.brickWidth;
+  }
+
+  void setLocation(float x, float y, float brickWidth, float brickHeight){
     this.x = x;
     this.y = y;
+    this.brickHeight = brickHeight;
+    this.brickWidth = brickWidth;
   }
 
   void brickDisplay(){
-    float brickWidth = 50, brickHeight = 25;
-
     fill(255, 0, 255);
-    rect(this.x, this.y, brickWidth, brickHeight);
+    rect(this.x, this.y, this.brickWidth, this.brickHeight);
   }
 
 }
