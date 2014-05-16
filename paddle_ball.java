@@ -1,22 +1,22 @@
-float ballX = 150;
-float ballY = 150;
+int paddleWidth = 100;
+int paddleHeight = 10;
+float paddleX = 100;
+int paddleY;
+
 int radius = 8;
-boolean ballMoving = false;
+float ballX = paddleX;
+float ballY = paddleY;
+boolean gameInProgress = false;
 
 ArrayList<Brick> bricks;
 int brickY = 50;
 float brickWidth = 50, brickHeight = 25;
 int numOfBricks = 7;
 
-int paddleWidth = 100;
-int paddleHeight = 10;
-int paddleX = 100;
-int paddleY;
-
 int score = 0;
 
 float xVelocity = random(4, 6);
-float yVelocity = random(2, 3);
+float yVelocity = random(-4, -3);
 
 void setup(){
   size(400, 400);
@@ -38,6 +38,15 @@ void draw(){
   background(0, 108, 135);
 
   fill(255, 234, 0);
+  if (gameInProgress) {
+    applyVelocity();
+    changeVelocity();
+    isGameOver();
+  }
+  else {
+    ballX = paddleX + paddleWidth/2;
+    ballY = paddleY - radius;
+  }
   ellipse(ballX, ballY, radius*2, radius*2);
 
   fill(240, 126, 65);
@@ -51,19 +60,18 @@ void draw(){
   fill(255, 0, 0);
   textSize(30);
   text(score, 75, 150);
-
-  isGameOver();
-  applyVelocity();
-  changeVelocity();
 }
 
 void keyPressed() {
 int paddleShiftingSpeed = 45;
   if (key == CODED) {
     if (keyCode == LEFT) {
+      //while paddleX > width-width
       paddleX -= paddleShiftingSpeed;
+      gameInProgress = true;
     } else if (keyCode == RIGHT) {
       paddleX += paddleShiftingSpeed;
+      gameInProgress = true;
     }
   }
 }
@@ -71,14 +79,6 @@ int paddleShiftingSpeed = 45;
 void mouseMoved() {
   paddleX = mouseX;
 }
-
-void mouseClicked(){
-  if (ballMoving){
-    float xVelocity = random(4, 6);
-    float yVelocity = random(2, 3);
-    ballMoving = true;
-   }
-};
 
 void applyVelocity(){
   ballX += xVelocity;
@@ -118,7 +118,11 @@ void regenerateBricks(){
 
 void isGameOver(){
   if (ballY > height){
-    noLoop();}
+    gameInProgress = false;
+    score = 0;
+    xVelocity = random(4, 6);
+    yVelocity = random(-4, -3);
+  }
 }
 
 void incrementScore(){
@@ -248,3 +252,7 @@ class Brick{
   }
 
 }
+
+void mouseClicked(){
+  gameInProgress = true;
+};
