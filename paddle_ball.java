@@ -22,7 +22,6 @@ void setup(){
   size(400, 400);
   paddleY = height - 70;
   bricks = new ArrayList();
-
   createBricks();
 }
 
@@ -68,10 +67,17 @@ int paddleShiftingSpeed = 45;
     if (keyCode == LEFT) {
       //while paddleX > width-width
       paddleX -= paddleShiftingSpeed;
-      gameInProgress = true;
-    } else if (keyCode == RIGHT) {
+    }
+    else if (keyCode == RIGHT) {
       paddleX += paddleShiftingSpeed;
-      gameInProgress = true;
+    }
+    else if (keyCode == UP) {
+       gameInProgress = true;
+       score = 0;
+    }
+    else if (keyCode == DOWN) {
+       gameInProgress = true;
+       score =0;
     }
   }
 }
@@ -119,9 +125,12 @@ void regenerateBricks(){
 void isGameOver(){
   if (ballY > height){
     gameInProgress = false;
-    score = 0;
+
     xVelocity = random(4, 6);
     yVelocity = random(-4, -3);
+
+    numOfBricks = 7;
+    createBricks();
   }
 }
 
@@ -255,4 +264,5 @@ class Brick{
 
 void mouseClicked(){
   gameInProgress = true;
+  score = 0;
 };
