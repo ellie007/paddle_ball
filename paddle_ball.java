@@ -10,6 +10,7 @@ int numOfBricks = 7;
 
 int paddleWidth = 100;
 int paddleHeight = 10;
+int paddleX = 100;
 int paddleY;
 
 int score = 0;
@@ -18,11 +19,11 @@ float xVelocity = random(4, 6);
 float yVelocity = random(2, 3);
 
 void setup(){
- size(400, 400);
- paddleY = height - 70;
- bricks = new ArrayList();
+  size(400, 400);
+  paddleY = height - 70;
+  bricks = new ArrayList();
 
- createBricks();
+  createBricks();
 }
 
 void createBricks(){
@@ -40,7 +41,7 @@ void draw(){
   ellipse(ballX, ballY, radius*2, radius*2);
 
   fill(240, 126, 65);
-  rect(mouseX, paddleY, paddleWidth, paddleHeight);
+  rect(paddleX, paddleY, paddleWidth, paddleHeight);
 
   for (int i = 0; i < bricks.size(); i ++){
     Brick b = (Brick) bricks.get(i);
@@ -54,6 +55,21 @@ void draw(){
   isGameOver();
   applyVelocity();
   changeVelocity();
+}
+
+void keyPressed() {
+int paddleShiftingSpeed = 45;
+  if (key == CODED) {
+    if (keyCode == LEFT) {
+      paddleX -= paddleShiftingSpeed;
+    } else if (keyCode == RIGHT) {
+      paddleX += paddleShiftingSpeed;
+    }
+  }
+}
+
+void mouseMoved() {
+  paddleX = mouseX;
 }
 
 void mouseClicked(){
@@ -151,7 +167,7 @@ boolean abovePaddle(){
 
 boolean paddleSurface(){
   boolean result = false;
-   if ((ballX >= mouseX) && (ballX <= mouseX + paddleWidth)){
+   if ((ballX >= paddleX) && (ballX <= paddleX + paddleWidth)){
    result = true;
    }
    return result;
@@ -161,7 +177,6 @@ boolean hitsBricks(){
   boolean result = false;
   for (int i = 0; i < bricks.size(); i++){
     Brick thisBrick = bricks.get(i);
-    //float brickTop = thisBrick.getY();
     float brickBottom = thisBrick.getY() + thisBrick.getBrickHeight();
     float brickLeft = thisBrick.getX();
     float brickRight = thisBrick.getX() + thisBrick.getBrickWidth();
