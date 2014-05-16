@@ -18,22 +18,22 @@ int score = 0;
 float xVelocity = random(4, 6);
 float yVelocity = random(-4, -3);
 
-void setup(){
+void setup() {
   size(400, 400);
   paddleY = height - 70;
   bricks = new ArrayList();
   createBricks();
 }
 
-void createBricks(){
-  for (int i = 1; i < numOfBricks; i ++){
+void createBricks() {
+  for (int i = 1; i < numOfBricks; i ++) {
     Brick brick = new Brick();
     brick.setLocation(50 * i, brickY, brickWidth, brickHeight);
     bricks.add(brick);
   }
 }
 
-void draw(){
+void draw() {
   background(0, 108, 135);
 
   fill(255, 234, 0);
@@ -43,41 +43,48 @@ void draw(){
     isGameOver();
   }
   else {
-    ballX = paddleX + paddleWidth/2;
-    ballY = paddleY - radius;
+    ballStartEndPoint();
   }
   ellipse(ballX, ballY, radius*2, radius*2);
 
   fill(240, 126, 65);
   rect(paddleX, paddleY, paddleWidth, paddleHeight);
 
-  for (int i = 0; i < bricks.size(); i ++){
-    Brick b = (Brick) bricks.get(i);
-    b.brickDisplay();
-  }
+  displayGameBricks();
 
   fill(255, 0, 0);
   textSize(30);
   text(score, 75, 150);
 }
 
+void ballStartEndPoint() {
+  ballX = paddleX + paddleWidth/2;
+  ballY = paddleY - radius;
+}
+
+void displayGameBricks() {
+  for (int i = 0; i < bricks.size(); i ++) {
+    Brick b = (Brick) bricks.get(i);
+    b.brickDisplay();
+  }
+}
+
 void keyPressed() {
 int paddleShiftingSpeed = 45;
   if (key == CODED) {
     if (keyCode == LEFT) {
-      //while paddleX > width-width
       paddleX -= paddleShiftingSpeed;
     }
     else if (keyCode == RIGHT) {
       paddleX += paddleShiftingSpeed;
     }
     else if (keyCode == UP) {
-       gameInProgress = true;
-       score = 0;
+      gameInProgress = true;
+      score = 0;
     }
     else if (keyCode == DOWN) {
-       gameInProgress = true;
-       score =0;
+      gameInProgress = true;
+      score =0;
     }
   }
 }
@@ -86,91 +93,94 @@ void mouseMoved() {
   paddleX = mouseX;
 }
 
-void applyVelocity(){
+void applyVelocity() {
   ballX += xVelocity;
   ballY += yVelocity;
 }
 
-void changeVelocity(){
-  if (hitsLeftWall()){
+void changeVelocity() {
+  if (hitsLeftWall()) {
     xVelocityChange();
   }
-  else if (hitsRightWall()){
+  else if (hitsRightWall()) {
     xVelocityChange();
   }
 
-  if (hitsPaddle()){
+  if (hitsPaddle()) {
     yVelocityChange();
     incrementScore();
   }
-  else if (hitsCeiling()){
+  else if (hitsCeiling()) {
     yVelocityChange();
   }
 
-  if (hitsBricks()){
+  if (hitsBricks()) {
     yVelocityChange();
     score += 5;
     numOfBricks -= 1;
-    regenerateBricks();
+    regenerateBricksCheck();
   }
 }
 
-void regenerateBricks(){
+void regenerateBricksCheck() {
   if (numOfBricks == 1){
     numOfBricks = 7;
     createBricks();
   }
 }
 
-void isGameOver(){
-  if (ballY > height){
+void isGameOver() {
+  if (ballY > height) {
     gameInProgress = false;
-
-    xVelocity = random(4, 6);
-    yVelocity = random(-4, -3);
-
-    numOfBricks = 7;
-    createBricks();
+    resetGame();
   }
 }
 
-void incrementScore(){
+void resetGame() {
+  xVelocity = random(4, 6);
+  yVelocity = random(-4, -3);
+
+  numOfBricks = 7;
+  createBricks();
+}
+
+void incrementScore() {
   score += 1;
 }
 
-boolean hitsPaddle(){
+boolean hitsPaddle() {
   boolean result = false;
-  if ((abovePaddle()) && (paddleSurface())){
+  if ( (abovePaddle()) && (paddleSurface()) ) {
   result = true;
   }
   return result;
 }
 
-boolean hitsCeiling(){
+boolean hitsCeiling() {
   boolean result = false;
-  if (ballTop() <= height-height){
+  if (ballTop() <= height-height) {
   result = true;
   }
   return result;
 }
 
-boolean hitsRightWall(){
+boolean hitsRightWall() {
   boolean result = false;
-  if (ballRight() >= width){
+  if (ballRight() >= width) {
     result = true;
   }
   return result;
 }
 
-boolean hitsLeftWall(){
+boolean hitsLeftWall() {
   boolean result = false;
-  if (ballLeft() <= width-width){
+  if (ballLeft() <= width-width) {
   result = true;
   }
   return result;
 }
 
-boolean abovePaddle(){
+boolean abovePaddle() {
   boolean result = false;
   if ((ballBottom() >= paddleY) && (ballTop() <= paddleY + paddleHeight)){
   result = true;
@@ -178,9 +188,9 @@ boolean abovePaddle(){
   return result;
 }
 
-boolean paddleSurface(){
+boolean paddleSurface() {
   boolean result = false;
-   if ((ballX >= paddleX) && (ballX <= paddleX + paddleWidth)){
+   if ((ballX >= paddleX) && (ballX <= paddleX + paddleWidth)) {
    result = true;
    }
    return result;
@@ -188,14 +198,14 @@ boolean paddleSurface(){
 
 boolean hitsBricks(){
   boolean result = false;
-  for (int i = 0; i < bricks.size(); i++){
+  for (int i = 0; i < bricks.size(); i++) {
     Brick thisBrick = bricks.get(i);
     float brickBottom = thisBrick.getY() + thisBrick.getBrickHeight();
     float brickLeft = thisBrick.getX();
     float brickRight = thisBrick.getX() + thisBrick.getBrickWidth();
 
-    if (ballTop() <= brickBottom){
-      if (ballLeft() >= brickLeft && ballRight() <= brickRight){
+    if (ballTop() <= brickBottom) {
+      if (ballLeft() >= brickLeft && ballRight() <= brickRight) {
         result = true;
         bricks.remove(i);
       }
@@ -204,47 +214,47 @@ boolean hitsBricks(){
   return result;
 }
 
-void xVelocityChange(){
+void xVelocityChange() {
   xVelocity = xVelocity * -1;
 }
 
-void yVelocityChange(){
+void yVelocityChange() {
   yVelocity = yVelocity * -1;
 }
 
-float ballTop(){
+float ballTop() {
   return ballY - radius;
 }
 
-float ballRight(){
+float ballRight() {
   return ballX + radius;
 }
 
-float ballBottom(){
+float ballBottom() {
   return ballY + radius;
 }
 
-float ballLeft(){
+float ballLeft() {
   return ballX - radius;
 }
 
-class Brick{
+class Brick {
   float x, y;
   float brickWidth, brickHeight;
 
-  float getY(){
+  float getY() {
     return this.y;
   }
 
-  float getX(){
+  float getX() {
     return this.x;
   }
 
-  float getBrickHeight(){
+  float getBrickHeight() {
     return this.brickHeight;
   }
 
-  float getBrickWidth(){
+  float getBrickWidth() {
     return this.brickWidth;
   }
 
@@ -255,14 +265,13 @@ class Brick{
     this.brickWidth = brickWidth;
   }
 
-  void brickDisplay(){
+  void brickDisplay() {
     fill(255, 0, 255);
     rect(this.x, this.y, this.brickWidth, this.brickHeight);
   }
-
 }
 
-void mouseClicked(){
+void mouseClicked() {
   gameInProgress = true;
   score = 0;
 };
