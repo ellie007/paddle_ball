@@ -1,6 +1,6 @@
 int paddleWidth = 100;
 int paddleHeight = 10;
-float paddleX = 100;
+float paddleX = 150;
 int paddleY;
 
 int radius = 8;
@@ -73,10 +73,20 @@ void keyPressed() {
 int paddleShiftingSpeed = 45;
   if (key == CODED) {
     if (keyCode == LEFT) {
-      paddleX -= paddleShiftingSpeed;
+      if (remainingPaddleDistanceLeft() < paddleWidth) {
+        paddleX -= remainingPaddleDistanceLeft();
+      }
+      else if (withinGridCheckLeft()) {
+        paddleX -= paddleShiftingSpeed;
+      }
     }
     else if (keyCode == RIGHT) {
-      paddleX += paddleShiftingSpeed;
+      if (remainingPaddleXDistanceRight() < paddleWidth) {
+        paddleX += remainingPaddleXDistanceRight();
+      }
+      else if (withinGridCheckRight()) {
+        paddleX += paddleShiftingSpeed;
+      }
     }
     else if (keyCode == UP) {
       gameInProgress = true;
@@ -88,9 +98,36 @@ int paddleShiftingSpeed = 45;
     }
   }
 }
+float remainingPaddleDistanceLeft() {
+  float result = paddleX - (width - width);
+  return result;
+}
+
+float remainingPaddleXDistanceRight() {
+  float result = width - (paddleX + paddleWidth);
+  return result;
+}
+
+boolean withinGridCheckLeft() {
+  boolean result = false;
+  if (paddleX > width - width) {
+    result = true;
+  }
+  return result;
+}
+
+boolean withinGridCheckRight(){
+  boolean result = false;
+  if (paddleX + paddleWidth < width) {
+  result = true;
+  }
+  return result;
+}
 
 void mouseMoved() {
-  paddleX = mouseX;
+  if (mouseX > width - width && mouseX + paddleWidth < width) {
+    paddleX = mouseX;
+  }
 }
 
 void applyVelocity() {
